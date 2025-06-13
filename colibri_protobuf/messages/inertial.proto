@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package colibri.inertial;
+
+option csharp_namespace = "Colibri.Api.Messages.Inertial";
+
+message Orientation {
+  double tilt_x = 1;
+  double tilt_y = 2;
+}
+
+message RelativePosition {
+  uint64 origin_sequence_number = 1;
+  double ang_alpha = 2;
+  double ang_beta = 3;
+  double ang_gamma = 4;
+  double pos_x = 5;
+  double pos_y = 6;
+  double pos_z = 7;
+  .colibri.inertial.RelativePositionQuality quality = 8;
+}
+
+message PositionTrackingStatus {
+  bool enabled = 1;
+  bool running = 2;
+  .colibri.inertial.RelativePositionQuality quality = 3;
+}
+
+message BaseData {
+  uint32 nsamples = 1;
+  float avg_acc_x = 2;
+  float avg_acc_y = 3;
+  float avg_acc_z = 4;
+  float avg_gyro_z = 5;
+  float sdev_acc_x = 6;
+  float sdev_acc_y = 7;
+  float sdev_acc_z = 8;
+  float sdev_gyro_z = 9;
+  repeated .colibri.inertial.RawIMUData raw_data = 16;
+  uint32 n_slowangle_samples = 10;
+  double avg_slowangle_rad = 11;
+}
+
+message RawIMUData {
+  uint32 xdi_packet_counter = 1;
+  uint32 xdi_sample_time_fine = 2;
+  float acc_x = 3;
+  float acc_y = 4;
+  float acc_z = 5;
+  float gyr_x = 6;
+  float gyr_y = 7;
+  float gyr_z = 8;
+  float mag_x = 9;
+  float mag_y = 10;
+  float mag_z = 11;
+}
+
+message InertialData {
+  repeated .colibri.inertial.BaseData base_data = 1;
+}
+
+message PositionUpdate {
+  bool position_valid = 1;
+  bool error = 2;
+  bool moving = 3;
+  double pos_x = 4;
+  double pos_y = 5;
+  double pos_z = 6;
+  double ang_a = 7;
+  double ang_b = 8;
+  double ang_c = 9;
+}
+
+message SlowAngleUpdate {
+  double angle = 1;
+}
+
+message ExtendedPositionUpdate {
+  .colibri.inertial.PositionUpdate position_update = 1;
+  .colibri.inertial.RawIMUData raw_data = 2;
+  .colibri.inertial.SlowAngleUpdate angle_update = 3;
+}
+
+enum RelativePositionQuality {
+  INVALID_QUALITY = 0;
+  OK = 1;
+  BAD = 2;
+  MOVE_TOO_LONG = 3;
+  TOO_MUCH_ROTATION = 4;
+  IMU_FAILED = 5;
+  SLOW_ANGLE_FAILED = 6;
+}
+

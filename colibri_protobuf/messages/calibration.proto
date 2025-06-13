@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package colibri.calibration;
+
+option csharp_namespace = "Colibri.Api.Messages.Calibration";
+
+import "messages/imaging.proto";
+import "messages/system.proto";
+import "google/protobuf/timestamp.proto";
+
+message KinematicParam {
+  repeated float lambda1 = 1;
+  repeated float lambda2 = 2;
+  repeated float u = 3;
+  repeated float e = 4;
+  repeated float d_el = 5;
+}
+
+message KinematicInfo {
+  float kinematic_temperature = 1;
+  .google.protobuf.Timestamp kinematic_timestamp = 2;
+  uint32 fast_axis_timestamp_offset_kin = 3;
+  uint32 slow_axis_timestamp_offset_kin = 4;
+  uint32 fast_axis_timestamp_offset_app = 5;
+  uint32 slow_axis_timestamp_offset_app = 6;
+}
+
+message EDMParam {
+  reserved 1 to 6;
+  reserved 8 to 10;
+  message APDParam {
+    float apd_temperature = 3;
+    float apd_break_voltage = 1;
+    float apd_temperature_coeff = 2;
+    float apd_voltage_setting = 4;
+    repeated float apd_break_voltage_fit_coeff = 5;
+  }
+
+  message VelaroCorrections {
+    reserved 1;
+    float nadir_distance = 2;
+    repeated float tau_offset_correction = 3;
+    repeated float tau_swing_correction_x_values = 4;
+    repeated float tau_swing_correction_y_values = 5;
+  }
+
+  .colibri.calibration.EDMParam.APDParam apd_param = 7;
+  .colibri.calibration.EDMParam.VelaroCorrections velaro_1_corrections = 11;
+  .colibri.calibration.EDMParam.VelaroCorrections velaro_2_corrections = 12;
+  repeated float tau_optic_correction_x_values = 13;
+  repeated float tau_optic_correction_y_values = 14;
+  repeated float distance_albedo_correction_x_values = 15;
+  repeated float distance_albedo_correction_y_values = 16;
+  repeated float rw_extrapolation_coeff_gain1 = 17;
+  float nadir_distance_temperature_correction_coefficient = 18;
+}
+
+message OffsetParam {
+  repeated float ls_x = 1;
+  repeated float ls_y = 2;
+  repeated float ls_z = 3;
+  repeated float mo = 4;
+  repeated float so = 5;
+}
+
+message ScanParam {
+  reserved 4;
+  .colibri.calibration.KinematicParam kinematic_param = 1;
+  .colibri.calibration.EDMParam edm_param = 2;
+  .colibri.calibration.OffsetParam offset_param = 3;
+  .colibri.calibration.KinematicInfo kinematic_info = 5;
+}
+
+message ScanSysParam {
+  uint32 version = 2;
+  string serial_number = 3;
+  .google.protobuf.Timestamp timestamp = 4;
+  string metadata = 5;
+  .colibri.calibration.ScanParam data = 1;
+  .colibri.system.SystemRevisionReply device_info = 6;
+}
+
+message ScanSysReply {
+  .colibri.calibration.ScanSysParam message = 1;
+}
+
+message CamParam {
+  reserved 1;
+  repeated float transformation = 2;
+  repeated float projection = 3;
+  repeated int32 noise = 6;
+  repeated float linearization = 5;
+  repeated float vignetting = 7;
+  repeated float geometry = 4;
+  repeated float geometry_temperature = 8;
+  repeated float color = 9;
+  repeated float auto_white_balance_factors = 10;
+}
+
+message RGBCaptureParam {
+  float auto_expose_factor = 7;
+}
+
+message CamSysParam {
+  message MessageEntry {
+    .colibri.imaging.CamSelector.CamID cam_id = 1;
+    .colibri.calibration.CamParam data = 2;
+  }
+
+  uint32 version = 2;
+  string serial_number = 3;
+  .google.protobuf.Timestamp timestamp = 4;
+  string metadata = 5;
+  repeated .colibri.calibration.CamSysParam.MessageEntry message = 1;
+  .colibri.system.SystemRevisionReply device_info = 6;
+  .colibri.calibration.RGBCaptureParam captureParam = 7;
+}
+
+message CamSysReply {
+  .colibri.calibration.CamSysParam message = 1;
+}
+
+message SlowMotParam {
+  float gear_ratio = 1;
+}
+
+message MotorisationReply {
+  .colibri.calibration.SlowMotParam slow_mot_param = 1;
+}
+
+message CalibrationDataReply {
+  .colibri.calibration.CamSysParam cam_sys = 1;
+  .colibri.calibration.ScanSysParam scn_sys = 2;
+}
+

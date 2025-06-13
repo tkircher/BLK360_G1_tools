@@ -1,0 +1,237 @@
+syntax = "proto3";
+
+package colibri.system;
+
+option csharp_namespace = "Colibri.Api.Messages.System";
+
+message HwModState {
+  bool edm_board_enable = 1;
+  bool fast_mot_enable = 2;
+  bool fast_ang_enable = 3;
+  bool slow_mot_enable = 4;
+  bool slow_ang_enable = 5;
+  bool i2s_audio_enable = 6;
+  bool beeper_enable = 7;
+  bool led_ring_enable = 8;
+  bool cam_board_enable = 9;
+  bool wlan_board_enable = 10;
+  bool wlan_mod_enable = 11;
+  bool bt_enable = 12;
+  bool open_bat_door = 13;
+}
+
+message SoftwareRev {
+  string linux = 1;
+  string hps = 2;
+  string fpga = 3;
+  string efi_mcu = 4;
+  string edm_mcu = 5;
+  string slow_axis_mcu = 6;
+  string lattice_fpga = 7;
+  string velaro_soc = 8;
+  string combined = 9;
+}
+
+message HardwareRev {
+  string system_board_rev = 1;
+  string edm_board_rev = 2;
+  string fast_ang_board_rev = 3;
+  string wlan_board_rev = 4;
+  string base_board_rev = 5;
+  string combined = 6;
+  string cam_board_rev = 7;
+  string bcon_board_rev = 8;
+}
+
+message ManufactureRev {
+  string device_name = 1;
+  string serial_number = 2;
+  string article_number = 3;
+}
+
+message DeviceCaps {
+  bool has_ir_cam = 1;
+}
+
+message Filesystem {
+  enum Purpose {
+    INVALID_PURPOSE = 0;
+    SYSTEM = 1;
+    USER_DATA = 2;
+    CALIB_DATA = 3;
+    REMOVABLE = 4;
+  }
+
+  string mount_point = 1;
+  uint64 storage_capacity = 2;
+  uint64 storage_free = 3;
+  .colibri.system.Filesystem.Purpose purpose = 4;
+}
+
+message Storage {
+  repeated .colibri.system.Filesystem filesystem = 1;
+}
+
+message SystemPower {
+  float sys_current = 1;
+  float v_sys_33v = 2;
+  float v_sys_50v = 3;
+  float v_bat = 4;
+  uint32 bat_charge = 5;
+  float v_sys_line = 6;
+}
+
+message EnvironmentReply {
+  float base_board_temp = 1;
+  float fast_ang_temp = 2;
+  float sys_board_temp = 3;
+  float meteo_temp = 4;
+  float meteo_press = 5;
+  float meteo_hum = 6;
+  float battery_temp = 7;
+  float apd_temp = 8;
+  float laser_temp = 9;
+  float ircam_aux_temp = 10;
+  float ircam_fpa_temp = 11;
+}
+
+message SystemPowerReply {
+  .colibri.system.SystemPower power = 1;
+}
+
+message SystemRevisionReply {
+  .colibri.system.ManufactureRev manufact_rev = 1;
+  .colibri.system.SoftwareRev sw_rev = 2;
+  .colibri.system.HardwareRev hw_rev = 3;
+  .colibri.system.DeviceCaps capabilities = 4;
+}
+
+message HwModStateReply {
+  .colibri.system.HwModState mode_states = 1;
+}
+
+message MemRequest {
+  enum Type {
+    INVALID_TYPE = 0;
+    FPGA_EDM_CTRL = 1;
+    FPGA_EDM_ALGO = 2;
+    FPGA_IMG = 3;
+    FPGA_CASA = 4;
+    FPGA_CONTIGUOUS = 5;
+  }
+
+  .colibri.system.MemRequest.Type type = 1;
+  uint32 offset = 2;
+  uint32 value = 3;
+}
+
+message MemReply {
+  uint32 value = 1;
+}
+
+message I2CRequest {
+  enum I2CBusNo {
+    INVALID_BUS_NO = 0;
+    I2C1 = 1;
+    I2C2 = 2;
+  }
+
+  .colibri.system.I2CRequest.I2CBusNo bus = 1;
+  uint32 address = 2;
+  bytes data = 3;
+  uint32 count = 4;
+}
+
+message I2CReply {
+  bytes data = 1;
+}
+
+message SPIRequest {
+  enum SPIBusNo {
+    INVALID_BUS_NO = 0;
+    SPI_MOT_SLOW = 1;
+    SPI_MOT_FAST = 2;
+    SPI_CAMERA = 3;
+  }
+
+  enum SpiMode {
+    INVALID_MODE = 0;
+    MODE_0 = 1;
+    MODE_1 = 2;
+    MODE_2 = 3;
+    MODE_3 = 4;
+  }
+
+  .colibri.system.SPIRequest.SPIBusNo bus = 1;
+  uint32 mode = 2;
+  uint32 speed = 3;
+  bytes data = 4;
+  uint32 count = 5;
+}
+
+message SPIReply {
+  bytes data = 1;
+}
+
+message SystemSEPCommandRequest {
+  uint32 command_id = 1;
+  bytes payload = 2;
+}
+
+message SystemSEPCommandReply {
+  int32 ret = 1;
+  bytes payload = 2;
+}
+
+message SystemSetSerialRequest {
+  string serial = 1;
+}
+
+message SystemGetSerialReply {
+  string serial = 1;
+}
+
+message KeyMsg {
+  string key = 1;
+}
+
+message LedReq {
+  enum Color {
+    COLOR_INVALID = 0;
+    RED = 1;
+    GREEN = 2;
+    YELLOW = 3;
+  }
+
+  enum Mode {
+    MODE_INVALID = 0;
+    OFF = 1;
+    STEADY = 2;
+    BLINK = 3;
+    BLINK_SMOOTH = 4;
+  }
+
+  .colibri.system.LedReq.Color color = 1;
+  .colibri.system.LedReq.Mode mode = 2;
+  uint32 brightness = 3;
+}
+
+message EfiSimStatusEventReq {
+  enum StatusEvent {
+    EVENT_INVALID = 0;
+    BUTTON_PRESSED = 1;
+    BUTTON_RELEASED = 2;
+    SYSTEM_SHUTDOWN = 3;
+    BATTERY_OK = 4;
+    BATTERY_LOW = 5;
+    BATTERY_CRITICAL = 6;
+    BATTERY_EMPTY = 7;
+    TEMP_LOW = 8;
+    TEMP_HIGH = 9;
+    TEMP_CRITICAL = 10;
+    TEMP_NORMAL = 11;
+  }
+
+  .colibri.system.EfiSimStatusEventReq.StatusEvent event = 1;
+}
+

@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package colibri.imaging;
+
+option csharp_namespace = "Colibri.Api.Messages.Imaging";
+
+message CamSelector {
+  enum CamID {
+    INVALID_CAMERA = 0;
+    CAM0 = 1;
+    CAM1 = 2;
+    CAM2 = 3;
+    IR_CAM = 4;
+  }
+
+  .colibri.imaging.CamSelector.CamID cam_id = 1;
+}
+
+message IrImgSettings {
+  enum GainMode {
+    INVALID_GAIN_MODE = 0;
+    HIGH = 1;
+    LOW = 2;
+    AUTO = 3;
+  }
+
+  .colibri.imaging.IrImgSettings.GainMode gain_mode = 1;
+  float scene_emissivity = 2;
+}
+
+message ImgProperties {
+  .colibri.imaging.CamSelector.CamID cam_id = 1;
+  uint32 width = 2;
+  uint32 height = 3;
+  float azimuth = 4;
+  float temperature_min = 6;
+  float temperature_max = 7;
+  float wb_gain_r = 8;
+  float wb_gain_g = 9;
+  float wb_gain_b = 10;
+  uint32 exposure_time = 11;
+  bool is_dummy = 12;
+}
+
+message ImgSettings {
+  reserved 5;
+  enum Mode {
+    INVALID_MODE = 0;
+    HDR = 1;
+    FLASH_AUTO = 2;
+    FLASH_ON = 3;
+    FLASH_OFF = 4;
+    IR = 5;
+    HDR_IR = 6;
+    FLASH_AUTO_IR = 7;
+    FLASH_ON_IR = 8;
+    FLASH_OFF_IR = 9;
+  }
+
+  enum Format {
+    INVALID_FORMAT = 0;
+    RAW10 = 1;
+    RAW10_JPEG12CMYK = 6;
+    RAW10_JPEG12YCCK = 7;
+    RAW16 = 2;
+    GRAYSCALE16 = 4;
+    RESERVED3 = 3;
+    RESERVED5 = 5;
+  }
+
+  enum ExposureCorrection {
+    NO_CORRECTION = 0;
+    MINUS_FIVE_STEPS = 1;
+    MINUS_FOUR_STEPS = 2;
+    MINUS_THREE_STEPS = 3;
+    MINUS_TWO_STEPS = 4;
+    MINUS_ONE_STEP = 5;
+    PLUS_ONE_STEP = 6;
+    PLUS_TWO_STEPS = 7;
+    PLUS_THREE_STEPS = 8;
+    PLUS_FOUR_STEPS = 9;
+    PLUS_FIVE_STEPS = 10;
+  }
+
+  enum ExposureMetering {
+    INVALID_EXPOSURE_METERING = 0;
+    AVERAGE = 1;
+    INDIVIDUAL = 2;
+  }
+
+  .colibri.imaging.ImgSettings.Mode mode = 1;
+  .colibri.imaging.ImgSettings.Format format = 2;
+  uint32 nr_of_hdr_exposures = 3;
+  uint32 exposure = 4;
+  .colibri.imaging.ImgProperties extended = 6;
+  uint32 quality = 7;
+  bool rgb_vignetting_correction_off = 8;
+  bool black_level_correction_on = 9;
+  .colibri.imaging.ImgSettings.ExposureCorrection exposure_correction = 10;
+  float hdr_exposure_factor = 11;
+  bool no_auto_white_balance_run = 12;
+  .colibri.imaging.IrImgSettings ir_settings = 13;
+  .colibri.imaging.ImgSettings.ExposureMetering exposure_metering = 14;
+}
+
+message FlashMode {
+  .colibri.imaging.ImgSettings.Mode panorama_mode = 1;
+}
+
+message MeterExposureAndWhiteBalanceReply {
+  bool auto_flash_wants_flash_on = 1;
+  .colibri.imaging.ImgProperties image_properties = 2;
+}
+
+message OneImgRequest {
+  .colibri.imaging.CamSelector.CamID cam_id = 1;
+  .colibri.imaging.ImgSettings settings = 2;
+  bool test_pattern = 3;
+}
+
+message OneImgReply {
+  uint64 uuid = 1;
+}
+
+message AutoExposureDecreasingFactor {
+  double factor = 1;
+}
+
+message AutoExposureDecreasingFactors {
+  repeated double factors = 1;
+}
+

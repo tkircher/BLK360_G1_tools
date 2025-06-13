@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package colibri.scanner;
+
+option csharp_namespace = "Colibri.Api.Messages.Scanner";
+
+message ScanProperties {
+  uint32 scanline_count = 1;
+  uint32 scanline_size = 2;
+  float angle_h_begin = 3;
+  float angle_h_end = 4;
+  float angle_v_begin = 5;
+  float angle_v_end = 6;
+  bool compressed = 7;
+}
+
+message ScanSettings {
+  enum Density {
+    INVALID_DENSITY = 0;
+    MEDIUM = 1;
+    LOW = 2;
+    HIGH = 3;
+  }
+
+  enum Format {
+    INVALID_FORMAT = 0;
+    REGULAR = 1;
+    PROCESSED = 2;
+  }
+
+  .colibri.scanner.ScanSettings.Density density = 1;
+  .colibri.scanner.ScanSettings.Format format = 2;
+  .colibri.scanner.ScanProperties extended = 3;
+}
+

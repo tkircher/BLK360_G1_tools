@@ -1,0 +1,384 @@
+syntax = "proto3";
+
+package colibri.app;
+
+option csharp_namespace = "Colibri.Api.Messages.App";
+
+import "messages/general.proto";
+import "messages/imaging.proto";
+import "messages/system.proto";
+import "messages/scanner.proto";
+import "messages/calibration.proto";
+import "messages/inertial.proto";
+import "google/protobuf/timestamp.proto";
+
+message DevStatusReply {
+  reserved 5;
+  message StatusDetails {
+    .colibri.app.DevStatusReply.StatusCode code = 1;
+    .colibri.app.DevStatusReply.StatusComponent component = 2;
+    string description = 3;
+    .google.protobuf.Timestamp time_utc = 4;
+  }
+
+  message SessionEntry {
+    string key = 1;
+    .colibri.general.SessionInfo value = 2;
+  }
+
+  enum Status {
+    INVALID_STATUS = 0;
+    IDLE = 1;
+    BUSY_IMAGING = 2;
+    BUSY_SCAN = 3;
+    FATAL = 4;
+    BUSY_SELF_TIMER = 5;
+    ERROR = 6;
+    SHUTDOWN = 7;
+    BUSY_FORMATTING = 8;
+  }
+
+  enum StatusCode {
+    OK = 0;
+    ERR_LOW_BATTERY = 1;
+    ERR_INTERNAL = 2;
+    ERR_STORAGE_EXCEEDED = 3;
+    ERR_DEVICE_MOVED = 4;
+    ERR_DEVICE_BLOCKED = 5;
+    ERR_STORAGE_CORRUPTED = 6;
+    ERR_SWUPDATE_FAILED = 7;
+    ERR_COMMUNICATION = 8;
+    ERR_FUNCTION = 9;
+    ERR_OTHER = 10;
+    ERR_TEMP_LOW = 14;
+    ERR_TEMP_HIGH = 15;
+    ERR_TEMP_CRIT = 16;
+    FATAL_CALIBRATION = 11;
+    FATAL_HW = 12;
+    FATAL_OTHER = 13;
+  }
+
+  enum StatusComponent {
+    UNSPECIFIC_COMP = 0;
+    COMP_EDM = 1;
+    COMP_EFI = 2;
+    COMP_FPGA = 3;
+    COMP_LATTICE = 4;
+    COMP_FAST_AXIS = 5;
+    COMP_SLOW_AXIS = 6;
+    COMP_CAM = 7;
+    COMP_IRCAM = 8;
+    COMP_STORAGE = 9;
+    COMP_SWUPDATE = 10;
+    COMP_SYSTEM = 11;
+    COMP_SCAN = 12;
+    COMP_IMAGING = 13;
+    COMP_GRPC = 14;
+    COMP_BOOT_FLASH = 15;
+    COMP_IMU = 16;
+    COMP_SLOW_ANGLE = 17;
+  }
+
+  .colibri.system.SystemPower power = 1;
+  .colibri.system.Storage storage = 2;
+  .colibri.system.EnvironmentReply environment = 3;
+  .colibri.app.DevStatusReply.Status status = 4;
+  .colibri.app.DevStatusReply.StatusDetails details = 8;
+  uint64 sequence_number = 7;
+  repeated .colibri.app.DevStatusReply.SessionEntry session = 6;
+  .colibri.inertial.PositionTrackingStatus position_tracking = 9;
+  .colibri.app.WifiClientMsg wifi_client_config = 10;
+}
+
+message DataEntryReply {
+  enum DataType {
+    INVALID_TYPE = 0;
+    SCAN = 1;
+    IMAGE = 2;
+    INERTIAL = 3;
+    POSITION = 4;
+  }
+
+  enum DataStatus {
+    INVALID_STATUS = 0;
+    UNAVAILABLE = 1;
+    AVAILABLE = 2;
+    WRITE_PROTECTED = 3;
+    UNFINISHED = 4;
+  }
+
+  .colibri.app.DataEntryReply.DataStatus status = 1;
+  .colibri.app.DataEntryReply.DataType type = 2;
+  uint64 uuid = 3;
+  uint64 sequence_number = 4;
+  uint64 timestamp = 5;
+  uint64 size = 6;
+  oneof data_settings {
+    .colibri.imaging.ImgSettings image_settings = 7;
+    .colibri.scanner.ScanSettings scan_settings = 8;
+    .colibri.inertial.Orientation orientation_data = 9;
+    .colibri.inertial.RelativePosition position_data = 10;
+  }
+}
+
+message DataDirectoryReply {
+  message EntriesEntry {
+    uint64 key = 1;
+    .colibri.app.DataEntryReply value = 2;
+  }
+
+  repeated .colibri.app.DataDirectoryReply.EntriesEntry entries = 1;
+}
+
+message FtpStatusReply {
+  enum Status {
+    INVALID_STATUS = 0;
+    STOPPED = 1;
+    STARTED = 2;
+  }
+
+  .colibri.app.FtpStatusReply.Status status = 1;
+}
+
+message DataEntryUuidToFileNameReply {
+  message EntriesEntry {
+    uint64 key = 1;
+    string value = 2;
+  }
+
+  repeated .colibri.app.DataEntryUuidToFileNameReply.EntriesEntry entries = 1;
+}
+
+message DataSeqRequest {
+  uint64 sequence_number = 1;
+}
+
+message DataSeqReply {
+  repeated uint64 sequence_numbers = 1;
+}
+
+message DataRequest {
+  uint64 uuid = 1;
+  uint64 length = 2;
+  uint64 offset = 3;
+  bool mark_write_protected = 4;
+}
+
+message DataReply {
+  bytes data = 1;
+  uint64 offset = 2;
+  uint64 size = 3;
+}
+
+message ProgressInfo {
+  enum Event {
+    INVALID_EVENT = 0;
+    PREPARING = 1;
+    EXECUTING = 2;
+    FINISHED = 3;
+    ERROR = 4;
+  }
+
+  uint64 uuid = 1;
+  .colibri.app.ProgressInfo.Event event = 2;
+  uint64 act_operation = 3;
+  uint64 max_operations = 4;
+}
+
+message ProgressReply {
+  enum ProgressType {
+    INVALID_TYPE = 0;
+    IMAGE = 1;
+    SCAN = 2;
+  }
+
+  uint64 sequence_number = 1;
+  .colibri.app.ProgressReply.ProgressType type = 2;
+  .colibri.app.ProgressInfo info = 3;
+}
+
+message LongSeqReply {
+  uint64 sequence_number = 1;
+}
+
+message ImagePositions {
+  message Position {
+    .colibri.imaging.CamSelector.CamID cam_id = 1;
+    float angle = 2;
+  }
+
+  repeated .colibri.app.ImagePositions.Position positions = 1;
+}
+
+message ImageRequest {
+  .colibri.app.ImagePositions image_positions = 1;
+  .colibri.imaging.ImgSettings image_settings = 2;
+  uint64 sequence_number = 3;
+}
+
+message ScanRequest {
+  .colibri.scanner.ScanSettings scan_settings = 1;
+  uint64 sequence_number = 2;
+  bool no_inertial_data = 3;
+}
+
+message ImageScanRequest {
+  .colibri.app.ImageRequest image_request = 1;
+  .colibri.app.ScanRequest scan_request = 2;
+}
+
+message SeqInfoRequest {
+  repeated uint64 sequence_number = 1;
+  bool with_calibration = 2;
+}
+
+message SeqInfoMessage {
+  enum SequenceState {
+    INVALID_SEQUENCE_STATE = 0;
+    WAITING = 1;
+    PREPARING_IMAGING = 2;
+    PREPARING_SCANNING = 3;
+    ACQUIRING_IMAGING = 4;
+    ACQUIRING_SCANNING = 5;
+    ABORTED = 6;
+    FINISHED = 7;
+  }
+
+  uint64 sequence_number = 1;
+  .google.protobuf.Timestamp start_time = 2;
+  .google.protobuf.Timestamp stop_time = 3;
+  .google.protobuf.Timestamp waiting_timeout = 4;
+  .google.protobuf.Timestamp preparation_timeout = 5;
+  uint32 imaging_total = 6;
+  uint32 imaging_done = 7;
+  uint32 imaging_ir_total = 8;
+  uint32 imaging_ir_done = 9;
+  .colibri.imaging.ImgSettings image_settings = 16;
+  uint64 scanning_total = 10;
+  uint64 scanning_done = 11;
+  .colibri.app.SeqInfoMessage.SequenceState state = 12;
+  .colibri.calibration.CamSysParam cam_calib = 13;
+  .colibri.calibration.ScanSysParam scan_calib = 14;
+  .colibri.system.SystemRevisionReply device_info = 15;
+  bool do_not_persist = 17;
+  string name = 18;
+}
+
+message SeqInfoReply {
+  repeated .colibri.app.SeqInfoMessage sequences = 1;
+}
+
+message UpdateSeqNameRequest {
+  uint64 sequence_number = 1;
+  string sequence_name = 2;
+}
+
+message DeviceTimeMessage {
+  .google.protobuf.Timestamp time_utc = 1;
+}
+
+message ServiceReportReply {
+  .google.protobuf.Timestamp time_utc = 1;
+  bytes encrypted = 2;
+}
+
+message FormatDataStorageRequest {
+}
+
+message ButtonConfigMsg {
+  .colibri.imaging.ImgSettings img_settings = 1;
+  .colibri.scanner.ScanSettings scan_settings = 2;
+  uint32 self_timer = 3;
+}
+
+message SSIDPasswordMsg {
+  string ssid = 1;
+  .colibri.system.KeyMsg password = 2;
+}
+
+message SSIDSignalMsg {
+  message SSIDSignal {
+    string ssid = 1;
+    int32 signal = 2;
+  }
+
+  repeated .colibri.app.SSIDSignalMsg.SSIDSignal access_points = 1;
+}
+
+message SSIDPoolMsg {
+  repeated string ssid = 1;
+}
+
+message WifiClientMsg {
+  .colibri.app.SSIDPasswordMsg ssid = 1;
+  int32 signal = 2;
+  string ipv4_addr = 3;
+  string ipv6_addr = 4;
+  string netmask_v4 = 5;
+  string gateway_v4 = 6;
+  repeated string dns = 7;
+  uint32 lease_time_in_secs = 8;
+  bool is_current_connection = 9;
+}
+
+message WifiClientPoolMsg {
+  repeated .colibri.app.WifiClientMsg configs = 1;
+}
+
+message StandbyMsg {
+  enum StandbyMode {
+    STANDBY_INVALID = 0;
+    STANDBY_DEFAULT = 1;
+    STANDBY_DISABLE = 2;
+    STANDBY_SET = 3;
+  }
+
+  .colibri.app.StandbyMsg.StandbyMode mode = 1;
+  uint32 timeout = 2;
+}
+
+message PositionTrackingConfigMsg {
+  bool enabled = 1;
+}
+
+message SequenceNameConfig {
+  string template_name = 1;
+}
+
+message GeneralConfigMsg {
+  enum WifiClientMode {
+    WIFI_CLIENT_MODE_ENABLED = 0;
+    WIFI_CLIENT_MODE_DISABLED = 1;
+  }
+
+  .colibri.app.StandbyMsg standby = 1;
+  .colibri.app.GeneralConfigMsg.WifiClientMode wifi_client_mode = 2;
+  uint32 max_nr_of_ssids = 3;
+  .colibri.app.PositionTrackingConfigMsg position_tracking = 4;
+  .colibri.imaging.IrImgSettings ir_settings = 5;
+  .colibri.app.SequenceNameConfig sequence_name_config = 6;
+}
+
+message SsidConfig {
+  string ssid = 1;
+  bool hide = 2;
+}
+
+enum ApiVersion {
+  INVALID_APP_VERSION = 0;
+  APP_V_1_0_0 = 65536;
+  APP_V_1_1_0 = 65792;
+  APP_V_1_2_0 = 66048;
+  APP_V_1_3_0 = 66304;
+  APP_V_1_4_0 = 66560;
+  APP_V_1_5_0 = 66816;
+  APP_V_1_6_0 = 67072;
+  APP_V_1_7_0 = 67328;
+  APP_V_1_8_0 = 67584;
+  APP_V_1_9_0 = 67840;
+  APP_V_1_10_0 = 68096;
+  APP_V_1_11_0 = 68352;
+  APP_V_1_12_0 = 68608;
+  APP_VERSION = 68864;
+}
+

@@ -1,0 +1,231 @@
+syntax = "proto3";
+
+package colibri.edm;
+
+option csharp_namespace = "Colibri.Api.Messages.Edm";
+
+message EDMSysParam {
+  bool enable = 1;
+  .colibri.edm.VelaroSetting velaro_regs = 2;
+  .colibri.edm.EDMAssmbly edm_assembly = 3;
+  .colibri.edm.ModuleState edm_state = 4;
+}
+
+message Distance {
+  uint64 edm_shot = 1;
+}
+
+message EDMAssmbly {
+  uint32 apd_version = 1;
+  uint32 amplifier_version = 2;
+  uint32 laser_diode_version = 3;
+  uint32 apd_pwm_version = 4;
+}
+
+message VelaroSetting {
+  enum ReturnMode {
+    INVALID_RETURN_MODE = 0;
+    SINGLE_RETURN = 1;
+    DUAL_RETURN = 2;
+  }
+
+  uint32 point_rate = 1;
+  uint32 averages = 2;
+  uint32 nr_of_velaros = 3;
+  .colibri.edm.VelaroSetting.ReturnMode return_mode = 4;
+}
+
+message ModuleState {
+  enum Activity {
+    INVALID_ACTIVITY = 0;
+    RUNNING = 1;
+    IDLE = 2;
+    STANDBY = 3;
+    ALARM = 4;
+    CHANGE_REQUEST = 5;
+  }
+
+  .colibri.edm.ModuleState.Activity current_state = 1;
+  float pos_amp_voltage = 2;
+  float neg_amp_voltage = 3;
+  float laser_voltage = 4;
+  float laser_bias_voltage = 5;
+  float laser_photo_voltage = 6;
+  float laser_current = 7;
+  float laser_temp = 8;
+  float apd_voltage = 9;
+  float apd_temp = 10;
+}
+
+message EDMSysReply {
+  .colibri.edm.EDMSysParam sys_param = 1;
+  .colibri.edm.Distance dist = 2;
+  .colibri.edm.ModuleState mod_state = 3;
+}
+
+message ParameterValue {
+  enum PrmIdWrite {
+    INVALID_PRM_ID_WRITE = 0;
+    LASER_BIAS_RHEOSTAT = 1;
+    PDETECT_HIGH_RHEOSTAT = 2;
+    PDETECT_LOW_RHEOSTAT = 3;
+    APD_PWM_GAIN_CALIBRATION = 4;
+    APD_TARGET_VOLTAGE = 5;
+    APD_PWM_START_FREQ = 6;
+  }
+
+  .colibri.edm.ParameterValue.PrmIdWrite prm_id = 1;
+  oneof value {
+    uint32 uint_val = 2;
+    float float_val = 3;
+  }
+}
+
+message QueryParamRequest {
+  enum PrmIdRead {
+    INVALID_PRM_ID_READ = 0;
+    READ_LASER_BIAS_RHEOSTAT = 1;
+    READ_PDETECT_HIGH_RHEOSTAT = 2;
+    READ_PDETECT_LOW_RHEOSTAT = 3;
+    READ_LASER_BIAS_VOLTAGE = 4;
+    READ_LASER_TEMPERATURE = 5;
+    READ_APD_TEMPERATURE = 6;
+    READ_APD_VOLTAGE = 7;
+    READ_MCU_STATE = 8;
+    READ_APD_VOLTAGE_SET = 9;
+    READ_COMM_STATUS_VALARO = 10;
+    READ_APD_PWM_LOCK_STATE = 11;
+    READ_KINETIS_VERSION = 12;
+    READ_VELARO_VERSION_1 = 13;
+    READ_VELARO_VERSION_2 = 14;
+    READ_EDM_BOARD_HW_VERSION = 15;
+  }
+
+  .colibri.edm.QueryParamRequest.PrmIdRead prm_id = 1;
+}
+
+message QueryParamReply {
+  oneof value {
+    uint32 uint_val = 1;
+    float float_val = 2;
+    string string_val = 3;
+  }
+}
+
+message McuAlarmReply {
+  enum McuAlarm {
+    INVALID_MCU_ALARM = 0;
+    POS_2V5_ALARM = 1;
+    NEG_2V5_ALARM = 2;
+    NEG_10V5_ALARM = 3;
+    LASER_CURRENT_ALARM = 4;
+    BIAS_VOLT_ALARM = 5;
+    APD_VOLT_ALARM = 6;
+    LASER_OVERHEAT_ALARM = 7;
+    LASER_UNDERHEAT_ALARM = 8;
+    APD_OVERHEAT_ALARM = 9;
+    APD_UNDERHEAT_ALARM = 10;
+    APD_FREQ_HIGH_ALARM = 11;
+    APD_FREQ_LOW_ALARM = 12;
+    APD_PWM_LOCKED_LOST_ALARM = 13;
+    SET_ERR_LASER_BIAS_VAL_ALARM = 14;
+    SET_ERR_PDETECT_HIGH_VAL_ALARM = 15;
+    SET_ERR_PDETECT_LOW_VAL_ALARM = 16;
+    LASER_BIAS_VAL_ALARM = 17;
+    LASER_PWR_VAL_ALARM = 18;
+    APD_MONITOR_VAL_ALARM = 19;
+    V1_COMM_ERR_ALARM = 20;
+    V1_DNLD_ERR_ALARM = 21;
+    V1_BOOT_ERR_ALARM = 22;
+    V1_EEPROM_ERR_ALARM = 23;
+    V2_COMM_ERR_ALARM = 24;
+    V2_DNLD_ERR_ALARM = 25;
+    V2_BOOT_ERR_ALARM = 26;
+    V2_EEPROM_ERR_ALARM = 27;
+    MCU_ERR_ALARM = 28;
+    MSU_RHEOSTAT_ERR_ALARM = 29;
+    I2C_MCU_APD_TEMP_ERR_ALARM = 30;
+    I2C_MCU_LASER_TEMP_ERR_ALARM = 31;
+    ADC_ERR_ALARM = 32;
+    LASER_PHOTO_CURRENT_VAL_ALARM = 33;
+  }
+
+  repeated .colibri.edm.McuAlarmReply.McuAlarm alarms = 1;
+}
+
+message VelaroReq {
+  enum MsrMode {
+    INVALID_MSR_MODE = 0;
+    EYESAFE_TYPE_1 = 1;
+    EYESAFE_TYPE_2 = 2;
+    AVERAGE_6 = 3;
+    SINGLE_PULSE = 9;
+    TRIG_DUAL_AVERAGE_4 = 12;
+    TRIG_AVERAGE_4 = 13;
+    OBSOLETE_4 = 4;
+    OBSOLETE_37 = 5;
+    OBSOLETE_38 = 6;
+    OBSOLETE_38_2 = 10;
+    OBSOLETE_39 = 7;
+    OBSOLETE_40 = 8;
+    OBSOLETE_40_2 = 11;
+  }
+
+  .colibri.edm.LaserId laser_id = 1;
+  .colibri.edm.VelaroReq.MsrMode msr_mode = 2;
+  bool laser_power_off = 3;
+  uint32 msr_speed = 4;
+}
+
+message VelaroDsvReq {
+  .colibri.edm.LaserId laser_id = 1;
+  bool use_block_mode = 2;
+}
+
+message VelaroDsvReply {
+  repeated int32 values = 1;
+}
+
+message MeasureReq {
+  enum SyncMode {
+    INVALID_SYNC_MODE = 0;
+    UNSYNCED = 1;
+    SYNC_WITH_NADIR = 2;
+    SYNC_WITH_ANGLE = 3;
+  }
+
+  enum EdmDataMode {
+    INVALID_DATA_MODE = 0;
+    RAW_ONLY = 1;
+    DISTANCE_ONLY = 2;
+    MIXED = 3;
+  }
+
+  .colibri.edm.MeasureReq.SyncMode sync_mode = 1;
+  uint32 number_of_samples = 2;
+  float start_ang_rad = 3;
+  .colibri.edm.MeasureReq.EdmDataMode data_mode = 4;
+}
+
+message MeasureReply {
+  uint64 uuid = 1;
+}
+
+message SEPCommandRequest {
+  uint32 command_id = 1;
+  bytes payload = 2;
+}
+
+message SEPCommandReply {
+  int32 ret = 1;
+  bytes payload = 2;
+}
+
+enum LaserId {
+  INVALID_LASER_ID = 0;
+  LASER_NONE = 1;
+  LASER1 = 2;
+  LASER2 = 3;
+  LASER_BOTH = 4;
+}
+

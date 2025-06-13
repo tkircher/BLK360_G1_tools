@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package colibri.motor;
+
+option csharp_namespace = "Colibri.Api.Messages.Motor";
+
+message FastMotSetSysReq {
+  .colibri.motor.FastMotCmd command = 1;
+  uint32 value = 2;
+  .colibri.motor.FastMotDir direction = 3;
+}
+
+message FastMotGetSysReq {
+  .colibri.motor.FastMotCmd command = 1;
+}
+
+message FastMotGetSysReply {
+  uint32 value = 1;
+  .colibri.motor.FastMotDir direction = 2;
+}
+
+message SlowMotReq {
+  .colibri.motor.SlowMotCmd command = 1;
+  int32 value = 2;
+}
+
+message SlowMotReply {
+  int32 value = 1;
+}
+
+message SlowMotPositRequest {
+  double angle = 1;
+}
+
+enum FastMotCmd {
+  INVALID_FAST_CMD = 0;
+  FAST_SPEED_REG = 1;
+  FAST_BREAK = 2;
+  FAST_DIR = 3;
+  FAST_INIT = 4;
+  FAST_GET_LOCK = 5;
+}
+
+enum FastMotDir {
+  INVALID_FAST_DIR = 0;
+  FAST_CW = 1;
+  FAST_CCW = 2;
+}
+
+enum SlowMotCmd {
+  INVALID_SLOW_MOT_CMD = 0;
+  SLOW_MOVE_VEL_CW = 1;
+  SLOW_MOVE_VEL_CCW = 2;
+  SLOW_MOVE_POSIT = 3;
+  SLOW_GET_CUR_POS = 4;
+  SLOW_SET_VMAX = 5;
+  SLOW_SET_AMAX = 6;
+  SLOW_SET_DMAX = 7;
+  SLOW_GET_VMAX = 8;
+  SLOW_GET_AMAX = 9;
+  SLOW_GET_DMAX = 10;
+  SLOW_STOP = 11;
+  SLOW_IS_MOVING = 12;
+  SLOW_GET_IHOLD_IRUN = 13;
+  SLOW_SET_IHOLD_IRUN = 14;
+  SLOW_GET_RAMP_STAT = 15;
+}
+

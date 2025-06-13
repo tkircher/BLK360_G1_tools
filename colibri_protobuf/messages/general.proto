@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package colibri.general;
+
+option csharp_namespace = "Colibri.Api.Messages.General";
+
+message Empty {
+}
+
+message StreamCmd {
+  uint32 sub_sampling = 1;
+  uint32 duration = 2;
+  uint32 delay = 3;
+}
+
+message PasswordRequest {
+  string password = 1;
+  string client_name = 2;
+  uint64 timeout = 3;
+  uint32 api_version = 4;
+}
+
+message AbsTimeStamp {
+  uint64 timestamp = 1;
+}
+
+message SessionInfo {
+  bool am_i_the_one = 1;
+  string session_peer = 2;
+  string client_name = 3;
+}
+
