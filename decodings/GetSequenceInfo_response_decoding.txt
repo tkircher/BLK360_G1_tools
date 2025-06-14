@@ -1,0 +1,224 @@
+Protocol Buffers: /colibri.App/GetSequenceInfo,response
+
+082c120c08aca3aac20610a0a6fcbf02
+3054380160047acb010a210a0e424c4b
+3336302d333530373937351207333530
+373937351a06383530303030128a010a
+474c696e757820342e342e3232312d63
+6f6c696272692061726d76376c202331
+20534d5020505245454d505420547565
+2053657020362031363a35303a353320
+5554432032303232120676322e312e31
+1a08312e322e322e31392206302e3532
+2e302a06312e35322e303209312e302e
+31383036303a05312e362e354204302e
+33364a05322e312e311a190a01441201
+441a01442201422a0145320256313a01
+42420143820111080110061803400148
+015d0000804060019201075365747570
+3137
+
+message SeqInfoMessage {
+  enum SequenceState {
+    INVALID_SEQUENCE_STATE = 0;
+    WAITING = 1;
+    PREPARING_IMAGING = 2;
+    PREPARING_SCANNING = 3;
+    ACQUIRING_IMAGING = 4;
+    ACQUIRING_SCANNING = 5;
+    ABORTED = 6;
+    FINISHED = 7;
+  }
+
+  uint64 sequence_number = 1;
+  .google.protobuf.Timestamp start_time = 2;
+  .google.protobuf.Timestamp stop_time = 3;
+  .google.protobuf.Timestamp waiting_timeout = 4;
+  .google.protobuf.Timestamp preparation_timeout = 5;
+  uint32 imaging_total = 6;
+  uint32 imaging_done = 7;
+  uint32 imaging_ir_total = 8;
+  uint32 imaging_ir_done = 9;
+  .colibri.imaging.ImgSettings image_settings = 16;
+  uint64 scanning_total = 10;
+  uint64 scanning_done = 11;
+  .colibri.app.SeqInfoMessage.SequenceState state = 12;
+  .colibri.calibration.CamSysParam cam_calib = 13;
+  .colibri.calibration.ScanSysParam scan_calib = 14;
+  .colibri.system.SystemRevisionReply device_info = 15;
+  bool do_not_persist = 17;
+  string name = 18;
+}
+
+08 - 00001 000 - Field (1): VARINT
+
+2c - 0010 1100 - 44 (seq number)
+
+12 0c - 00010 010 - Field (2): LEN (12) submessage (start time)
+
+[08 ac a3 aa c2 06 10 a0 a6 fc bf 02]
+
+  00001 000
+  Field (1): VARINT - 10101100 10100011 10101010 11000010 00000110 ->
+                      00001101000010010101001000110101100 ->
+                      684A91AC - Thursday, June 12 2025 8:37:00 AM
+
+  00010 000
+  Field (2): VARINT - 10100000 10100110 11111100 10111111 00000010 ->
+                      00000010111111111110001001100100000 ->
+                      17FF1320 - 402592544 ns
+
+30 - 00110 000 - Field (6): VARINT - 54 (imaging total)
+38 - 00111 000 - Field (7): VARINT - 1  (imaging done? - true)
+60 - 01100 000 - Field (12): VARINT - 4 (sequence state - ACQUIRING_IMAGING)
+7a - 01111 010 - Field (15): LEN (203) submessage (device info)
+
+  cb 01 - 11001011 00000001 -> 00000011001011 - 203
+
+message SystemRevisionReply {
+  .colibri.system.ManufactureRev manufact_rev = 1;
+  .colibri.system.SoftwareRev sw_rev = 2;
+  .colibri.system.HardwareRev hw_rev = 3;
+  .colibri.system.DeviceCaps capabilities = 4;
+}
+
+0a 21 - 00001 010 - Field (1): LEN (21) submessage (manufact_rev)
+
+message ManufactureRev {
+  string device_name = 1;
+  string serial_number = 2;
+  string article_number = 3;
+}
+
+0a 0e 424c4b3336302d33353037393735		BLK360-3507975
+12 07 33353037393735				3507975
+1a 06 383530303030				850000
+
+12 8a 01 - Field (2): LEN (138) submessage (sw_rev)
+
+message SoftwareRev {
+  string linux = 1;
+  string hps = 2;
+  string fpga = 3;
+  string efi_mcu = 4;
+  string edm_mcu = 5;
+  string slow_axis_mcu = 6;
+  string lattice_fpga = 7;
+  string velaro_soc = 8;
+  string combined = 9;
+}
+
+0a 47 - 00001 010 - Field(1): LEN 71
+
+4c696e757820342e342e3232312d636f6c		Linux 4.4.221-col
+696272692061726d76376c20233120534d50		ibri armv7l #1 SMP
+20505245454d505420547565205365702036		 PREEMPT Tue Sep 6
+2031363a35303a3533205554432032303232		 16:50:53 UTC 2022	linux
+
+12 06 76322e312e31				v2.1.1			hps
+1a 08 312e322e322e3139				1.2.2.19		fpga
+22 06 302e35322e30				0.52.0			efi_mcu
+2a 06 312e35322e30				1.52.02			edm_mcu
+32 09 312e302e3138303630			1.0.18060		slow_axis_mcu
+3a 05 312e362e35				1.6.5			lattice_fpga
+42 04 302e3336					0.36			velaro_soc
+4a 05 322e312e31				2.1.1			combined
+
+1a 19 - 00011 010 - Field (3): LEN 25 submessage (hw_rev)
+
+message HardwareRev {
+  string system_board_rev = 1;
+  string edm_board_rev = 2;
+  string fast_ang_board_rev = 3;
+  string wlan_board_rev = 4;
+  string base_board_rev = 5;
+  string combined = 6;
+  string cam_board_rev = 7;
+  string bcon_board_rev = 8;
+}
+
+0a 01 44		system_board_rev	68
+12 01 44		edm_board_rev		68
+1a 01 44		fast_ang_board_rev	68
+22 01 42		wlan_board_rev		66
+2a 01 45		base_board_rev		69
+32 02 56 31		combined		3158
+3a 01 42		cam_board_rev		66
+42 01 43		bcon_board_rev		67
+
+[82 01] 11 - 10000 010 - Field (16): LEN 11 (image settings)
+
+
+message ImgSettings {
+  reserved 5;
+  enum Mode {
+    INVALID_MODE = 0;
+    HDR = 1;
+    FLASH_AUTO = 2;
+    FLASH_ON = 3;
+    FLASH_OFF = 4;
+    IR = 5;
+    HDR_IR = 6;
+    FLASH_AUTO_IR = 7;
+    FLASH_ON_IR = 8;
+    FLASH_OFF_IR = 9;
+  }
+
+  enum Format {
+    INVALID_FORMAT = 0;
+    RAW10 = 1;
+    RAW10_JPEG12CMYK = 6;
+    RAW10_JPEG12YCCK = 7;
+    RAW16 = 2;
+    GRAYSCALE16 = 4;
+    RESERVED3 = 3;
+    RESERVED5 = 5;
+  }
+
+  enum ExposureCorrection {
+    NO_CORRECTION = 0;
+    MINUS_FIVE_STEPS = 1;
+    MINUS_FOUR_STEPS = 2;
+    MINUS_THREE_STEPS = 3;
+    MINUS_TWO_STEPS = 4;
+    MINUS_ONE_STEP = 5;
+    PLUS_ONE_STEP = 6;
+    PLUS_TWO_STEPS = 7;
+    PLUS_THREE_STEPS = 8;
+    PLUS_FOUR_STEPS = 9;
+    PLUS_FIVE_STEPS = 10;
+  }
+
+  enum ExposureMetering {
+    INVALID_EXPOSURE_METERING = 0;
+    AVERAGE = 1;
+    INDIVIDUAL = 2;
+  }
+
+  .colibri.imaging.ImgSettings.Mode mode = 1;
+  .colibri.imaging.ImgSettings.Format format = 2;
+  uint32 nr_of_hdr_exposures = 3;
+  uint32 exposure = 4;
+  .colibri.imaging.ImgProperties extended = 6;
+  uint32 quality = 7;
+  bool rgb_vignetting_correction_off = 8;
+  bool black_level_correction_on = 9;
+  .colibri.imaging.ImgSettings.ExposureCorrection exposure_correction = 10;
+  float hdr_exposure_factor = 11;
+  bool no_auto_white_balance_run = 12;
+  .colibri.imaging.IrImgSettings ir_settings = 13;
+  .colibri.imaging.ImgSettings.ExposureMetering exposure_metering = 14;
+}
+
+08 01				Mode: HDR
+10 06				Format: RAW10_JPEG12CMYK
+18 03				Exposures: 3
+40 01				rgb_vignetting_correction_off = true
+48 01				black_level_correction_on = true
+5d 00 00 80 40			hdr_exposure_factor = 4.0
+60 01				no_auto_white_balance_run = true
+
+[92 01] - 10010 010 - Field (18): LEN 7 (name)
+
+53657475703137				Setup17
+
