@@ -1,0 +1,27 @@
+GRPC Message: /colibri.App/GetData, Request
+
+08ed161080800418808004
+
+
+message DataRequest {
+  uint64 uuid = 1;
+  uint64 length = 2;
+  uint64 offset = 3;
+  bool mark_write_protected = 4;
+}
+
+
+08 ed 16    - 00001 000 - Field (1) - VARINT: 2924 (uuid)
+
+   11101101 00010110 ->
+   00101101101101 -> 2925
+
+10 80 80 04 - 00010 000 - Field (2) - VARINT: 65536 (length)
+
+   10000000 10000000 00000100 ->
+   000010000000000000000 -> 65536
+
+18 80 80 04 - 00011 000 - Field (3) - VARINT: 65536 (offset)
+
+   10000000 10000000 00000100 ->
+   000010000000000000000 -> 65536

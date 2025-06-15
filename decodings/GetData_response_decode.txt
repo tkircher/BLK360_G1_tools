@@ -1,0 +1,21 @@
+GRPC Message: /colibri.App/GetData, Response
+
+
+message DataReply {
+  bytes data = 1;
+  uint64 offset = 2;
+  uint64 size = 3;
+}
+
+
+0a 80 80 04 - 00001 010 - Field (1): LEN 65536 (data)
+
+   10000000 10000000 00000100 ->
+   000010000000000000000 -> 65536
+
+e3be4c7f ... 65536 bytes total ... d0444f91 
+
+10 80 80 04 - 00010 000 - Field (2): VARINT: 65536 (offset)
+
+18 80 80 04 - 00011 000 - Field (3): VARINT: 65536 (size)
+
