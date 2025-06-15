@@ -174,17 +174,17 @@ message EnvironmentReply {
   float ircam_fpa_temp = 11;
 }
 
-Field(1):  0d 00400142 - 37.75 C
-Field(2):  15 0080ec41 - 37.25 C
-Field(3):  1d 9a990b42 - 46.7 C
-Field(4):  25 9a99f141 - 40.7 C
-Field(5):  2d 00407c44 - 1006 hPa
-Field(6):  35 0000f041 - 24% RH
-Field(7):  3d 0000ec41 - 34.7 C
-Field(8):  45 0000ef41 - 35.625 C
-Field(9):  4d 0000f141 - 35.875 C
-Field(10): 55 8014d641 - 33.210 C
-Field(11): 5d c0f5ce41 - 32.430 C
+Field(1):  0d 00400142 - 32.3125 C
+Field(2):  15 0080ec41 - 29.5625 C
+Field(3):  1d 9a990b42 - 34.9 C
+Field(4):  25 9a99f141 - 30.2 C
+Field(5):  2d 00407c44 - 1009 hPa
+Field(6):  35 0000f041 - 30% RH
+Field(7):  3d 0000ec41 - 29.5 C
+Field(8):  45 0000ef41 - 29.875 C
+Field(9):  4d 0000f141 - 30.125 C
+Field(10): 55 8014d641 - 26.760 C
+Field(11): 5d c0f5ce41 - 25.870 C
 
 
 20 - Field (4): VARINT 2 (status) - BUSY_IMAGING
