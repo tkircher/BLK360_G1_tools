@@ -1,0 +1,196 @@
+
+GRPC Message: /colibri.App/GetDataEntriesPerSequence, Response
+
+0a4208ae16123d0802100218ae16202c
+28b4a3aac20630ebaf1f3a2808011006
+18032089af1c3211080110a01418980f
+2547bda24058e28b07400148015d0000
+80406001
+
+0a 42 - Field (1): LEN 66
+
+08ae16123d0802100218ae16202c28b4
+a3aac20630ebaf1f3a28080110061803
+2089af1c3211080110a01418980f2547
+bda24058e28b07400148015d00008040
+6001
+
+
+08 ae 16          - 00001 000 - Field (1): VARINT: 2862 (key)
+   10101110 00010110 ->
+   00101100101110 -> 2862
+
+message DataDirectoryReply {
+  message EntriesEntry {
+    uint64 key = 1;
+    .colibri.app.DataEntryReply value = 2;
+  }
+
+  repeated .colibri.app.DataDirectoryReply.EntriesEntry entries = 1;
+}
+
+
+12 3d             - 00010 010 - Field (2): LEN 61 (DataEntryReply)
+
+
+message DataEntryReply {
+  enum DataType {
+    INVALID_TYPE = 0;
+    SCAN = 1;
+    IMAGE = 2;
+    INERTIAL = 3;
+    POSITION = 4;
+  }
+
+  enum DataStatus {
+    INVALID_STATUS = 0;
+    UNAVAILABLE = 1;
+    AVAILABLE = 2;
+    WRITE_PROTECTED = 3;
+    UNFINISHED = 4;
+  }
+
+  .colibri.app.DataEntryReply.DataStatus status = 1;
+  .colibri.app.DataEntryReply.DataType type = 2;
+  uint64 uuid = 3;
+  uint64 sequence_number = 4;
+  uint64 timestamp = 5;
+  uint64 size = 6;
+  oneof data_settings {
+    .colibri.imaging.ImgSettings image_settings = 7;
+    .colibri.scanner.ScanSettings scan_settings = 8;
+    .colibri.inertial.Orientation orientation_data = 9;
+    .colibri.inertial.RelativePosition position_data = 10;
+  }
+}
+
+
+08 02             - 00001 000 - Field (1) - VARINT: 2 (status: AVAILABLE)
+10 02             - 00010 000 - Field (2) - VARINT: 2 (type: IMAGE)
+18 ae 16          - 00011 000 - Field (3) - VARINT: 2862 (uuid)
+20 2c             - 00100 000 - Field (4) - VARINT: 44 (sequence number)
+28 b4 a3 aa c2 06 - 00101 000 - Field (5) - VARINT: (timestamp)
+
+   10110100 10100011 10101010 11000010 00000110 ->
+   00001101000010010101001000110110100 -> 1749717428 ->
+   Thursday, June 12, 2025 8:37:08 AM
+
+30 eb af 1f       - 00110 000 - Field (6) - VARINT: 514027 (size)
+
+   11101011 10101111 00011111 ->
+   001111101011111101011 -> 514027
+
+3a 28             - 00111 010 - Field (7) - LEN 40 (image_settings)
+
+
+message ImgSettings {
+  reserved 5;
+  enum Mode {
+    INVALID_MODE = 0;
+    HDR = 1;
+    FLASH_AUTO = 2;
+    FLASH_ON = 3;
+    FLASH_OFF = 4;
+    IR = 5;
+    HDR_IR = 6;
+    FLASH_AUTO_IR = 7;
+    FLASH_ON_IR = 8;
+    FLASH_OFF_IR = 9;
+  }
+
+  enum Format {
+    INVALID_FORMAT = 0;
+    RAW10 = 1;
+    RAW10_JPEG12CMYK = 6;
+    RAW10_JPEG12YCCK = 7;
+    RAW16 = 2;
+    GRAYSCALE16 = 4;
+    RESERVED3 = 3;
+    RESERVED5 = 5;
+  }
+
+  enum ExposureCorrection {
+    NO_CORRECTION = 0;
+    MINUS_FIVE_STEPS = 1;
+    MINUS_FOUR_STEPS = 2;
+    MINUS_THREE_STEPS = 3;
+    MINUS_TWO_STEPS = 4;
+    MINUS_ONE_STEP = 5;
+    PLUS_ONE_STEP = 6;
+    PLUS_TWO_STEPS = 7;
+    PLUS_THREE_STEPS = 8;
+    PLUS_FOUR_STEPS = 9;
+    PLUS_FIVE_STEPS = 10;
+  }
+
+  enum ExposureMetering {
+    INVALID_EXPOSURE_METERING = 0;
+    AVERAGE = 1;
+    INDIVIDUAL = 2;
+  }
+
+  .colibri.imaging.ImgSettings.Mode mode = 1;
+  .colibri.imaging.ImgSettings.Format format = 2;
+  uint32 nr_of_hdr_exposures = 3;
+  uint32 exposure = 4;
+  .colibri.imaging.ImgProperties extended = 6;
+  uint32 quality = 7;
+  bool rgb_vignetting_correction_off = 8;
+  bool black_level_correction_on = 9;
+  .colibri.imaging.ImgSettings.ExposureCorrection exposure_correction = 10;
+  float hdr_exposure_factor = 11;
+  bool no_auto_white_balance_run = 12;
+  .colibri.imaging.IrImgSettings ir_settings = 13;
+  .colibri.imaging.ImgSettings.ExposureMetering exposure_metering = 14;
+}
+
+
+08 01             - 00001 000 - Field(1) - VARINT: 1 (mode: HDR)
+10 06             - 00010 000 - Field(2) - VARINT: 6 (format: RAW10_JPEG12CMYK)
+18 03             - 00011 000 - Field(3) - VARINT: 3 (exposures)
+20 89 af 1c       - 00100 000 - Field(4) - VARINT: 464777 (exposure)
+
+   10001001 10101111 00011100 ->
+   001110001011110001001 -> 464777
+
+32 11             - 00110 010 - Field(6) - LEN 17 (ImgProperties)
+
+
+message ImgProperties {
+  .colibri.imaging.CamSelector.CamID cam_id = 1;
+  uint32 width = 2;
+  uint32 height = 3;
+  float azimuth = 4;
+  float temperature_min = 6;
+  float temperature_max = 7;
+  float wb_gain_r = 8;
+  float wb_gain_g = 9;
+  float wb_gain_b = 10;
+  uint32 exposure_time = 11;
+  bool is_dummy = 12;
+}
+
+
+08 01             - 00001 000 - Field(1) - VARINT: 1 (cam ID)
+10 a0 14          - 00010 000 - Field(2) - VARINT: 2592 (width)
+
+   10100000 00010100 ->
+   00101000100000 -> 2592
+
+18 98 0f          - 00011 000 - Field(3) - VARINT: 1944 (height)
+
+   10011000 00001111 ->
+   00011110011000 -> 1944
+
+25 47 bd a2 40    - 00100 101 - Field(4) - float - 5.085605 (azimuth)
+
+58 e2 8b 07       - 01011 000 - Field(11) - VARINT: 116194
+
+   11100010 10001011 00000111 ->
+   000011100010111100010 -> 116194
+
+40 01             - 01000 000 - Field (8) - VARINT: 1 (wb_gain_r)
+48 01             - 01001 000 - Field (9) - VARINT: 1 (wb_gain_g)
+5d 00 00 80 40    - 01011 101 - Field (11) - float - 4.0 (exposure_time)
+60 01             - 01100 000 - Field (12) - VARINT: 1 (is_dummy: true)
+
