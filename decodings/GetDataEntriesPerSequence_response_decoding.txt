@@ -15,11 +15,6 @@ a3aac20630ebaf1f3a28080110061803
 bda24058e28b07400148015d00008040
 6001
 
-
-08 ae 16          - 00001 000 - Field (1): VARINT: 2862 (key)
-   10101110 00010110 ->
-   00101100101110 -> 2862
-
 message DataDirectoryReply {
   message EntriesEntry {
     uint64 key = 1;
@@ -29,6 +24,9 @@ message DataDirectoryReply {
   repeated .colibri.app.DataDirectoryReply.EntriesEntry entries = 1;
 }
 
+08 ae 16          - 00001 000 - Field (1): VARINT: 2862 (key)
+   10101110 00010110 ->
+   00101100101110 -> 2862
 
 12 3d             - 00010 010 - Field (2): LEN 61 (DataEntryReply)
 
@@ -184,13 +182,15 @@ message ImgProperties {
 
 25 47 bd a2 40    - 00100 101 - Field(4) - float - 5.085605 (azimuth)
 
-58 e2 8b 07       - 01011 000 - Field(11) - VARINT: 116194
+58 e2 8b 07       - 01011 000 - Field(11) - VARINT: 116194 (exposure time)
 
    11100010 10001011 00000111 ->
    000011100010111100010 -> 116194
 
-40 01             - 01000 000 - Field (8) - VARINT: 1 (wb_gain_r)
-48 01             - 01001 000 - Field (9) - VARINT: 1 (wb_gain_g)
-5d 00 00 80 40    - 01011 101 - Field (11) - float - 4.0 (exposure_time)
-60 01             - 01100 000 - Field (12) - VARINT: 1 (is_dummy: true)
+(end of ImgProperties)
+
+40 01             - 01000 000 - Field (8) - VARINT: 1 (rgb_vignetting_correction_off = true)
+48 01             - 01001 000 - Field (9) - VARINT: 1 (black_level_correction_on = true)
+5d 00 00 80 40    - 01011 101 - Field (11) - float - 4.0 (hdr_exposure_factor)
+60 01             - 01100 000 - Field (12) - VARINT: 1 (no_auto_white_balance_run = true)
 
