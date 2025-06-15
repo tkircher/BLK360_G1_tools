@@ -1,0 +1,31 @@
+GRPC Message: /colibri.App/GetDataEntriesForFtpDownload, Response
+
+0a1308f916120e64617461656e7472795f32393336
+
+message DataDirectoryReply {
+  message EntriesEntry {
+    uint64 key = 1;
+    .colibri.app.DataEntryReply value = 2;
+  }
+
+  repeated .colibri.app.DataDirectoryReply.EntriesEntry entries = 1;
+}
+
+
+0a 13        - 00001 010 - Field (1): LEN 19 (entry)
+08 f8 16     - 00001 000 - Field (1): VARINT - 2936 (key)
+
+   11111000 00010110 ->
+   00101101111000 -> 2936
+
+12 0e        - 00010 010 - Field (2): LEN 14
+
+64617461656e7472795f32393336 - dataentry_2936 (value)
+
+
+0a1308f916120e64617461656e7472795f32393337
+0a1308fa16120e64617461656e7472795f32393338
+0a1308fb16120e64617461656e7472795f32393339
+0a1308fc16120e64617461656e7472795f32393430
+...
+0a1308f716120e64617461656e7472795f32393335
