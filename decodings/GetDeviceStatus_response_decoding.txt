@@ -1,0 +1,253 @@
+/colibri.App/GetDeviceStatus,response
+
+0a1b0dc9767e3f154c3751401d6de79f
+4025d8a3f8402864353ab4f84012190a
+170a072f7364636172641080a0b3c06e
+1880c0819d5e20021a370d0040014215
+0080ec411d9a990b42259a99f1412d00
+407c44350000f0413d0000ec41450000
+ef414d0000f141558014d6415dc0f5ce
+41200232330a03617070122c08011218
+697076343a3139322e3136382e32302e
+39313a34323732321a0e64656661756c
+742d636c69656e74382c42004a021802
+
+
+message DevStatusReply {
+  reserved 5;
+  message StatusDetails {
+    .colibri.app.DevStatusReply.StatusCode code = 1;
+    .colibri.app.DevStatusReply.StatusComponent component = 2;
+    string description = 3;
+    .google.protobuf.Timestamp time_utc = 4;
+  }
+
+  message SessionEntry {
+    string key = 1;
+    .colibri.general.SessionInfo value = 2;
+  }
+
+  enum Status {
+    INVALID_STATUS = 0;
+    IDLE = 1;
+    BUSY_IMAGING = 2;
+    BUSY_SCAN = 3;
+    FATAL = 4;
+    BUSY_SELF_TIMER = 5;
+    ERROR = 6;
+    SHUTDOWN = 7;
+    BUSY_FORMATTING = 8;
+  }
+
+  enum StatusCode {
+    OK = 0;
+    ERR_LOW_BATTERY = 1;
+    ERR_INTERNAL = 2;
+    ERR_STORAGE_EXCEEDED = 3;
+    ERR_DEVICE_MOVED = 4;
+    ERR_DEVICE_BLOCKED = 5;
+    ERR_STORAGE_CORRUPTED = 6;
+    ERR_SWUPDATE_FAILED = 7;
+    ERR_COMMUNICATION = 8;
+    ERR_FUNCTION = 9;
+    ERR_OTHER = 10;
+    ERR_TEMP_LOW = 14;
+    ERR_TEMP_HIGH = 15;
+    ERR_TEMP_CRIT = 16;
+    FATAL_CALIBRATION = 11;
+    FATAL_HW = 12;
+    FATAL_OTHER = 13;
+  }
+
+  enum StatusComponent {
+    UNSPECIFIC_COMP = 0;
+    COMP_EDM = 1;
+    COMP_EFI = 2;
+    COMP_FPGA = 3;
+    COMP_LATTICE = 4;
+    COMP_FAST_AXIS = 5;
+    COMP_SLOW_AXIS = 6;
+    COMP_CAM = 7;
+    COMP_IRCAM = 8;
+    COMP_STORAGE = 9;
+    COMP_SWUPDATE = 10;
+    COMP_SYSTEM = 11;
+    COMP_SCAN = 12;
+    COMP_IMAGING = 13;
+    COMP_GRPC = 14;
+    COMP_BOOT_FLASH = 15;
+    COMP_IMU = 16;
+    COMP_SLOW_ANGLE = 17;
+  }
+
+  .colibri.system.SystemPower power = 1;
+  .colibri.system.Storage storage = 2;
+  .colibri.system.EnvironmentReply environment = 3;
+  .colibri.app.DevStatusReply.Status status = 4;
+  .colibri.app.DevStatusReply.StatusDetails details = 8;
+  uint64 sequence_number = 7;
+  repeated .colibri.app.DevStatusReply.SessionEntry session = 6;
+  .colibri.inertial.PositionTrackingStatus position_tracking = 9;
+  .colibri.app.WifiClientMsg wifi_client_config = 10;
+}
+
+
+0a 1b - 00001 010 - Field(1): LEN 27 (power)
+
+0dc9767e3f154c3751401d6de79f4025d8a3f8402864353ab4f840
+
+message SystemPower {
+  float sys_current = 1;
+  float v_sys_33v = 2;
+  float v_sys_50v = 3;
+  float v_bat = 4;
+  uint32 bat_charge = 5;
+  float v_sys_line = 6;
+}
+
+0d c9767e3f - 0.994 A (sys_current)
+15 4c375140 - 3.269 V (v_sys_33v)
+1d 6de79f40 - 4.997 V (v_sys_50v)
+25 d8a3f840 - 7.770 V (v_bat)
+28 64       - 100%    (bat_charge)
+35 3ab4f840 - 7.772 V (v_sys_line)
+
+
+12 19 - 00010 010 - Field(2): LEN 25 (storage)
+
+0a170a072f7364636172641080a0b3c06e1880c0819d5e2002
+
+message Filesystem {
+  enum Purpose {
+    INVALID_PURPOSE = 0;
+    SYSTEM = 1;
+    USER_DATA = 2;
+    CALIB_DATA = 3;
+    REMOVABLE = 4;
+  }
+
+  string mount_point = 1;
+  uint64 storage_capacity = 2;
+  uint64 storage_free = 3;
+  .colibri.system.Filesystem.Purpose purpose = 4;
+}
+
+message Storage {
+  repeated .colibri.system.Filesystem filesystem = 1;
+}
+
+0a 17 - Field (1): LEN 23 (Filesystem submessage)
+
+Field (1): 0a 07: LEN 7 - 2f736463617264 - /sdcard (mount_point)
+
+Field (2): 10 - VARINT 80 a0 b3 c0 6e
+		10000000 10100000 10110011 11000000 01101110 ->
+		11011101000000011001101000000000000 ->
+                29,662,957,568 -> 29.6 GB (storage_capacity)
+
+Field (3): 18 - VARINT 80 c0 81 9d 5e
+                10000000 11000000 10000001 10011101 01011110 ->
+                10111100011101000000110000000000000 ->
+                25,293,774,848 -> 25.3 GB (storage_free)
+
+Field (4): 20 02 - USER_DATA (purpose)
+
+
+1a 37 - Field (3): LEN, length 55 (EnvironmentReply)
+
+0d00400142150080ec411d9a990b4225
+9a99f1412d00407c44350000f0413d00
+00ec41450000ef414d0000f141558014
+d6415dc0f5ce41
+
+message EnvironmentReply {
+  float base_board_temp = 1;
+  float fast_ang_temp = 2;
+  float sys_board_temp = 3;
+  float meteo_temp = 4;
+  float meteo_press = 5;
+  float meteo_hum = 6;
+  float battery_temp = 7;
+  float apd_temp = 8;
+  float laser_temp = 9;
+  float ircam_aux_temp = 10;
+  float ircam_fpa_temp = 11;
+}
+
+Field(1):  0d 00400142 - 37.75 C
+Field(2):  15 0080ec41 - 37.25 C
+Field(3):  1d 9a990b42 - 46.7 C
+Field(4):  25 9a99f141 - 40.7 C
+Field(5):  2d 00407c44 - 1006 hPa
+Field(6):  35 0000f041 - 24% RH
+Field(7):  3d 0000ec41 - 34.7 C
+Field(8):  45 0000ef41 - 35.625 C
+Field(9):  4d 0000f141 - 35.875 C
+Field(10): 55 8014d641 - 33.210 C
+Field(11): 5d c0f5ce41 - 32.430 C
+
+
+20 - Field (4): VARINT 2 (status) - BUSY_IMAGING
+
+32 - Field (6): LEN 51 (SessionEntry)
+
+0a03617070122c08011218697076343a
+3139322e3136382e32302e39313a3432
+3732321a0e64656661756c742d636c69
+656e74
+
+message SessionEntry {
+  string key = 1;
+  .colibri.general.SessionInfo value = 2;
+}
+
+message SessionInfo {
+  bool am_i_the_one = 1;
+  string session_peer = 2;
+  string client_name = 3;
+}
+
+Field (1): 0a 03 - LEN 3 - 617070 - app (key)
+Field (2): 12 2c - LEN 44
+
+
+Field (1): 08 01 - VARINT - bool TRUE (am_i_the_one)
+Field (2): 12 18 - LEN 24
+697076343a3139322e3136382e32302e39313a3432373232 - ipv4:192.168.20.91:42722
+
+Field (3): 1a 0e - LEN 14
+64656661756c742d636c69656e74 - default-client
+
+
+38 2c - 00111 000 - Field (7): VARINT 44 (sequence number)
+
+42 00 - 01000 010 - Field (8): LEN 0 (StatusDetails)
+
+message StatusDetails {
+  .colibri.app.DevStatusReply.StatusCode code = 1;
+  .colibri.app.DevStatusReply.StatusComponent component = 2;
+  string description = 3;
+  .google.protobuf.Timestamp time_utc = 4;
+}
+
+
+4a 02 - 01001 010 - Field (9): LEN 2 (position tracking)
+
+message PositionTrackingStatus {
+  bool enabled = 1;
+  bool running = 2;
+  .colibri.inertial.RelativePositionQuality quality = 3;
+}
+
+enum RelativePositionQuality {
+  INVALID_QUALITY = 0;
+  OK = 1;
+  BAD = 2;
+  MOVE_TOO_LONG = 3;
+  TOO_MUCH_ROTATION = 4;
+  IMU_FAILED = 5;
+  SLOW_ANGLE_FAILED = 6;
+}
+
+Field (3): 18 02 - VARINT 2 - BAD (quality)
+
