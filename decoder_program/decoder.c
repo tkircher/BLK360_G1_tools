@@ -1,3 +1,7 @@
+/* decoder.c - unscramble the obfuscated shader code embedded in the libBLK360.so library
+
+Copyright (C) Thomas Kircher <tkircher@gnu.org>, 2025 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
